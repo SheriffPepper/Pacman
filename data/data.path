@@ -1,0 +1,14 @@
+# Welcome window background
+welcome_background = "./data/pictures/welcome.png"
+
+# Entity textures
+pacman = "./data/pictures/pacman.png"
+
+blinky = "./data/pictures/blinky.png"  # red ghost
+pinky = "./data/pictures/pinky.png"  # pink ghost
+inky = "./data/pictures/inky.png"  # blue ghost
+clyde = "./data/pictures/clyde.png"  # orange ghost
+
+# Decoration textures
+numbers = "./data/pictures/numbers.png"
+items = "./data/pictures/items.png"
