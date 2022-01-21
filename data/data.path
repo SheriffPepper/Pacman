@@ -10,5 +10,5 @@ inky = "./data/pictures/inky.png"  # blue ghost
 clyde = "./data/pictures/clyde.png"  # orange ghost
 
 # Decoration textures
-numbers = "./data/pictures/numbers.png"
+symbols = "./data/pictures/symbols.png"
 items = "./data/pictures/items.png"
