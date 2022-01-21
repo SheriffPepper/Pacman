@@ -2,12 +2,27 @@ import pygame
 import os
 
 
+# Colors
+empty = 0, 0, 0, 0
+black = 0, 0, 0, 255
+yellow = 255, 255, 0, 255
+red = 255, 0, 0, 255
+green = 0, 255, 0, 255
+blue = 0, 0, 255, 255
+
+
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, image: str, *groups) -> None:
         super().__init__(*groups)
 
         self.image = load_image(image)
         self.rect = self.image.get_rect()
+
+    def get_height(self) -> int:
+        return self.rect.height
+
+    def get_width(self) -> int:
+        return self.rect.width
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(self.image, self.rect)
@@ -57,6 +72,12 @@ class AnimatedSprite(pygame.sprite.Sprite):
             self.image = self[self.index]
 
             return self
+
+    def get_height(self) -> int:
+        return self.rect.height
+
+    def get_width(self) -> int:
+        return self.rect.width
 
     def draw(self, screen: pygame.Surface) -> None:
         """Draws a sprite on the screen"""
