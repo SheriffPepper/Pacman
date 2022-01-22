@@ -1,3 +1,11 @@
+import load_data
+
+LEFT = 0
+RIGHT = 1
+UP = 2
+DOWN = 3
+
+
 class Matrix(object):
     def __init__(self, width: int, height: int, default: int = 0) -> None:
         if width < 1 or height < 1:
@@ -131,6 +139,28 @@ class Matrix(object):
             answer = answer.rstrip() + " ]\n"
 
         return answer
+
+
+class Entity(object):
+    def __init__(self, position: tuple, direction: int) -> None:
+        self.position = position
+        self.direction = direction
+
+    def change_direction(self, direction: int) -> None:
+        self.direction = direction
+
+    def move(self, x: int, y: int) -> None:
+        self.position = x, y
+
+    def forward(self, step: int) -> None:
+        if self.direction == LEFT:
+            self.position[0] -= step
+        elif self.direction == RIGHT:
+            self.position[0] += step
+        elif self.direction == UP:
+            self.position[1] -= step
+        else:
+            self.position[1] += step
 
 
 if __name__ == '__main__':
