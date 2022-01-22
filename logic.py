@@ -1,3 +1,5 @@
+import pygame.draw
+
 import load_data
 
 LEFT = 0
@@ -154,47 +156,46 @@ class Entity(object):
 
     def forward(self, step: int) -> None:
         if self.direction == LEFT:
-            self.position[0] -= step
+            self.position = self.position[0] - step, self.position[1]
         elif self.direction == RIGHT:
-            self.position[0] += step
+            self.position = self.position[0] + step, self.position[1]
         elif self.direction == UP:
-            self.position[1] -= step
+            self.position = self.position[0], self.position[1] - step
         else:
-            self.position[1] += step
+            self.position = self.position[0], self.position[1] + step
+
+    def draw(self, screen: pygame.Surface) -> None:
+        pygame.draw.circle(screen, (255, 255, 255, 255),
+                           self.position, 16)
 
 
 if __name__ == '__main__':
-    a = Matrix(5, 5)
-    # 0  0  0  0  0
-    # 0  0  0  0  0
-    # 0  0  0  0  0
-    # 0  0  0  0  0
-    # 0  0  0  0  0
-    b = Matrix(3, 3)
+    pygame.init()
+    size = width, height = 800, 600
 
-    b.matrix = [[1, 2, 3],
-                [4, 5, 6],
-                [7, 8, 9]]
+    screen = pygame.display.set_mode(size)
+    clock = pygame.time.Clock()
+    entity = Entity((100, 100), RIGHT)
 
-    a[::2] = b
-    # 1  0  2  0  3
-    # 0  0  0  0  0
-    # 4  0  5  0  6
-    # 0  0  0  0  0
-    # 7  0  8  0  9
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                raise SystemExit
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    entity.change_direction(UP)
+                elif event.key == pygame.K_a:
+                    entity.change_direction(LEFT)
+                elif event.key == pygame.K_s:
+                    entity.change_direction(DOWN)
+                elif event.key == pygame.K_d:
+                    entity.change_direction(RIGHT)
 
-    a[(1, 1):(4, 4)] = -1
-    #  1   0   2   0   3
-    #  0  -1  -1  -1   0
-    #  4  -1  -1  -1   6
-    #  0  -1  -1  -1   0
-    #  7   0   8   0   9
+        screen.fill(0)
 
-    a[2, 2] = 10
-    #  1   0   2   0   3
-    #  0  -1  -1  -1   0
-    #  4  -1  10  -1   6
-    #  0  -1  -1  -1   0
-    #  7   0   8   0   9
+        entity.forward(2)
+        entity.draw(screen)
 
-    print(a)
+        pygame.display.flip()
+        clock.tick(60)
