@@ -1,5 +1,4 @@
 import pygame.draw
-
 import load_data
 
 LEFT = 0

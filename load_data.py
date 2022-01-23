@@ -68,7 +68,7 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
             return self.frames[y][x]
         elif isinstance(index, int):
-            self.index = self.index[0], (self.index[1] + 1) % self.rows
+            self.index = self.index[0], index % self.rows
             self.image = self[self.index]
 
             return self
@@ -126,8 +126,9 @@ with open('./data/data.path', 'r', encoding='utf-8') as file:
     exec(file.read())
 
 
-# Welcome window background
+# Backgrounds
 welcome_background = Sprite(welcome_background)
+field_background = Sprite(field_background)
 
 # Entities
 pacman = AnimatedSprite(pacman, (4, 4))

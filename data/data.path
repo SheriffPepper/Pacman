@@ -1,5 +1,6 @@
-# Welcome window background
+# Backgrounds
 welcome_background = "./data/pictures/welcome.png"
+field_background = "./data/pictures/field.png"
 
 # Entity textures
 pacman = "./data/pictures/pacman.png"
