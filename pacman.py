@@ -28,7 +28,7 @@ class Pacman(Entity):
     def draw(self, screen: pygame.Surface) -> None:
         x, y = self.position
         width, height = self.pacman.get_width(), self.pacman.get_height()
-        x, y = x - width, y - height
+        # x, y = x - width, y - height
 
         if x < -(width // 2):
             x = screen.get_width() + width // 2
@@ -40,7 +40,8 @@ class Pacman(Entity):
         elif y > (screen.get_height() + height // 2):
             y = -(height // 2)
 
-        self.pacman.move(int(x), int(y))
-        self.position = x + width, y + height
+        self.pacman.move(int(x - width // 2), int(y - height // 2))
+        # self.position = x + width, y + height
+        self.position = x, y
 
         self.pacman.draw(screen)

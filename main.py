@@ -1,6 +1,6 @@
-from windows import main_menu, black
-from logic import LEFT, RIGHT, UP, DOWN
-from load_data import field_background
+from load_data import field_background, black
+from logic import Field, LEFT
+from windows import main_menu
 from pacman import Pacman
 import pygame
 
@@ -23,7 +23,10 @@ counter = 0
 animation_speed = fps // 8
 clock = pygame.time.Clock()
 
-pacman = Pacman((240, 440), LEFT)
+field = Field(width, height)
+
+pacman = Pacman((240, 424), LEFT)
+pacman.set_field(field)
 
 while True:
     for event in pygame.event.get():
@@ -41,6 +44,7 @@ while True:
         pacman.next()
 
     pacman.forward(speed)
+    pacman.update([pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s][pacman.direction])
 
     pygame.display.flip()
     clock.tick(fps)

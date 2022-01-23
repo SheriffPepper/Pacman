@@ -6,6 +6,8 @@ RIGHT = 1
 UP = 2
 DOWN = 3
 WALL = -1
+VERTICAL = UP, DOWN
+HORIZONTAL = LEFT, RIGHT
 
 
 class Matrix(object):
@@ -147,22 +149,95 @@ class Entity(object):
     def __init__(self, position: tuple, direction: int) -> None:
         self.position = position
         self.direction = direction
+        self.time = 0
+        self.queue = None
+        self.field = None
 
     def change_direction(self, direction: int) -> None:
-        self.direction = direction
+        self.queue = direction
+        self.time = 0
+
+    def set_field(self, field) -> None:
+        self.field = field
 
     def move(self, x: int, y: int) -> None:
         self.position = x, y
 
     def forward(self, step: int) -> None:
-        if self.direction == LEFT:
-            self.position = self.position[0] - step, self.position[1]
-        elif self.direction == RIGHT:
-            self.position = self.position[0] + step, self.position[1]
-        elif self.direction == UP:
-            self.position = self.position[0], self.position[1] - step
-        else:
-            self.position = self.position[0], self.position[1] + step
+        self.time += 1
+        if self.queue is None:
+            self.time = 0
+
+        direction = None
+
+        if self.queue in VERTICAL:
+            if self.direction in HORIZONTAL:
+                if int(self.position[0]) % self.field.size[0] - self.field.size[0] // 2 <= 1:
+                    direction = self.direction
+                    self.direction = self.queue
+            else:
+                direction = self.direction if self.direction != self.queue else None
+                self.direction = self.queue
+        elif self.queue in HORIZONTAL:
+            if self.direction in VERTICAL:
+                if int(self.position[1]) % self.field.size[1] - self.field.size[1] // 2 <= 1:
+                    direction = self.direction
+                    self.direction = self.queue
+            else:
+                direction = self.direction if self.direction != self.queue else None
+                self.direction = self.queue
+
+        x, y = self.position
+
+        # if self.direction == LEFT and self.field.get_cell((int(x - self.field.size[0]), int(y))) is not WALL:
+        #     x -= step
+        # elif self.direction == RIGHT and self.field.get_cell((int(x + self.field.size[0]), int(y))) is not WALL:
+        #     x += step
+        # elif self.direction == UP and self.field.get_cell((int(x), int(y - self.field.size[1]))) is not WALL:
+        #     y -= step
+        # elif self.direction == DOWN and self.field.get_cell((int(x), int(y + self.field.size[1]))) is not WALL:
+        #     y += step
+
+        if self.direction == LEFT and self.field[int((x - 8) / 16) % self.field.width,
+                                                 int(y / 16) % self.field.height] != WALL:
+            x -= step
+        elif self.direction == RIGHT and self.field[int((x + 8) / 16) % self.field.width,
+                                                    int(y / 16) % self.field.height] != WALL:
+            x += step
+        elif self.direction == UP and self.field[int(x / 16) % self.field.width,
+                                                 int((y - 8) / 16) % self.field.height] != WALL:
+            y -= step
+        elif self.direction == DOWN and self.field[int(x / 16) % self.field.width,
+                                                   int((y + 8) / 16) % self.field.height] != WALL:
+            y += step
+
+        if int(self.position[0]) % self.field.size[0] - self.field.size[0] // 2 <= 1 and \
+           int(self.position[1]) % self.field.size[1] - self.field.size[1] // 2 <= 1:
+            direction_ = (int((x - self.position[0]) // step * self.field.size[0]),
+                          int((y - self.position[1]) // step * self.field.size[1]))
+            if self.field.get_cell(direction_) is WALL:
+                # It was true direction
+                if direction is None:
+                    return
+                self.direction = direction
+
+                x, y = self.position
+
+                if self.direction == LEFT:
+                    x -= step
+                elif self.direction == RIGHT:
+                    x += step
+                elif self.direction == UP:
+                    y -= step
+                elif self.direction == DOWN:
+                    y += step
+
+                direction_ = (int(x - self.position[0]) * self.field.size[0],
+                              int(y - self.position[1]) * self.field.size[1])
+                if self.field.get_cell(direction_) is WALL:
+                    return
+
+        self.move(x, y)
 
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(screen, (255, 255, 255, 255),
@@ -214,9 +289,8 @@ class Field(Matrix):
         self.size = self.pixel_width // self.width, self.pixel_height // self.height
 
     def get_cell(self, position: tuple) -> int:
-        if 0 <= position[0] < self.pixel_width and 0 <= position[1] < self.pixel_height:
-            return self[position[0] // self.size[0], position[1] // self.size[1]]
-        raise ValueError
+        return self[(position[0] // self.size[0]) % self.width,
+                    (position[1] // self.size[1]) % self.height]
 
     def is_wall(self, x: int, y: int) -> bool:
         return self[x, y] is WALL
