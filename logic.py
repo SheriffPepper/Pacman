@@ -163,81 +163,57 @@ class Entity(object):
     def move(self, x: int, y: int) -> None:
         self.position = x, y
 
-    def forward(self, step: int) -> None:
-        self.time += 1
-        if self.queue is None:
-            self.time = 0
-
+    def forward(self, step: int, time: int) -> None:
         direction = None
-
-        if self.queue in VERTICAL:
-            if self.direction in HORIZONTAL:
-                if int(self.position[0]) % self.field.size[0] - self.field.size[0] // 2 <= 1:
-                    direction = self.direction
-                    self.direction = self.queue
-            else:
-                direction = self.direction if self.direction != self.queue else None
-                self.direction = self.queue
-        elif self.queue in HORIZONTAL:
-            if self.direction in VERTICAL:
-                if int(self.position[1]) % self.field.size[1] - self.field.size[1] // 2 <= 1:
-                    direction = self.direction
-                    self.direction = self.queue
-            else:
-                direction = self.direction if self.direction != self.queue else None
-                self.direction = self.queue
+        if self.queue is not None:
+            direction, self.direction = self.direction, self.queue
+            self.queue = None
 
         x, y = self.position
 
-        # if self.direction == LEFT and self.field.get_cell((int(x - self.field.size[0]), int(y))) is not WALL:
-        #     x -= step
-        # elif self.direction == RIGHT and self.field.get_cell((int(x + self.field.size[0]), int(y))) is not WALL:
-        #     x += step
-        # elif self.direction == UP and self.field.get_cell((int(x), int(y - self.field.size[1]))) is not WALL:
-        #     y -= step
-        # elif self.direction == DOWN and self.field.get_cell((int(x), int(y + self.field.size[1]))) is not WALL:
-        #     y += step
-
-        if self.direction == LEFT and self.field[int((x - 8) / 16) % self.field.width,
-                                                 int(y / 16) % self.field.height] != WALL:
+        # Left direction
+        if self.direction == LEFT:
             x -= step
-        elif self.direction == RIGHT and self.field[int((x + 8) / 16) % self.field.width,
-                                                    int(y / 16) % self.field.height] != WALL:
+        # Right direction
+        elif self.direction == RIGHT:
             x += step
-        elif self.direction == UP and self.field[int(x / 16) % self.field.width,
-                                                 int((y - 8) / 16) % self.field.height] != WALL:
+        # Up direction
+        elif self.direction == UP:
             y -= step
-        elif self.direction == DOWN and self.field[int(x / 16) % self.field.width,
-                                                   int((y + 8) / 16) % self.field.height] != WALL:
+        # Down direction
+        elif self.direction == DOWN:
             y += step
+        # Zero direction
+        else:
+            return
 
-        if int(self.position[0]) % self.field.size[0] - self.field.size[0] // 2 <= 1 and \
-           int(self.position[1]) % self.field.size[1] - self.field.size[1] // 2 <= 1:
-            direction_ = (int((x - self.position[0]) // step * self.field.size[0]),
-                          int((y - self.position[1]) // step * self.field.size[1]))
-            if self.field.get_cell(direction_) is WALL:
-                # It was true direction
-                if direction is None:
-                    return
-                self.direction = direction
+        hitbox = [# Upper left
+                  (x - self.field.size[0] // 2 + step,
+                   y - self.field.size[1] // 2 + step),
+                  # Upper right
+                  (x + self.field.size[0] // 2 - step,
+                   y - self.field.size[1] // 2 + step),
+                  # Lower left
+                  (x - self.field.size[0] // 2 + step,
+                   y + self.field.size[1] // 2 - step),
+                  # Lower right
+                  (x + self.field.size[0] // 2 - step,
+                   y + self.field.size[1] // 2 - step)]
 
-                x, y = self.position
+        collide = False
+        for point_x, point_y in hitbox:
+            if self.field.get_cell((int(point_x), int(point_y))) is WALL:
+                collide = True
+                break
 
-                if self.direction == LEFT:
-                    x -= step
-                elif self.direction == RIGHT:
-                    x += step
-                elif self.direction == UP:
-                    y -= step
-                elif self.direction == DOWN:
-                    y += step
-
-                direction_ = (int(x - self.position[0]) * self.field.size[0],
-                              int(y - self.position[1]) * self.field.size[1])
-                if self.field.get_cell(direction_) is WALL:
-                    return
-
-        self.move(x, y)
+        if not collide:
+            self.move(x, y)
+        # Return old direction
+        elif direction is not None:
+            queue = self.direction
+            self.direction = direction
+            self.forward(step, time)
+            self.queue = queue
 
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(screen, (255, 255, 255, 255),

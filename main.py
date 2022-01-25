@@ -38,12 +38,18 @@ while True:
     screen.fill(black)
     field_background.draw(screen)
 
+    for y in range(field.height):
+        for x in range(field.width):
+            pygame.draw.rect(screen, 0xffffff,
+                             (x * 16, y * 16,
+                              16, 16), width=1)
+
     pacman.draw(screen)
 
     if counter % animation_speed == 0:
         pacman.next()
 
-    pacman.forward(speed)
+    pacman.forward(speed, counter)
     pacman.update([pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s][pacman.direction])
 
     pygame.display.flip()
