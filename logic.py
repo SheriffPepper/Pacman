@@ -169,7 +169,7 @@ class Entity(object):
             direction, self.direction = self.direction, self.queue
             self.queue = None
 
-        x, y = self.position
+        x, y = x1, y1 = self.position
 
         # Left direction
         if self.direction == LEFT:
@@ -187,18 +187,34 @@ class Entity(object):
         else:
             return
 
+        # Left direction
+        if self.direction == LEFT:
+            x1 -= step * 2
+        # Right direction
+        elif self.direction == RIGHT:
+            x1 += step * 2
+        # Up direction
+        elif self.direction == UP:
+            y1 -= step * 2
+        # Down direction
+        elif self.direction == DOWN:
+            y1 += step * 2
+        # Zero direction
+        else:
+            return
+
         hitbox = [# Upper left
-                  (x - self.field.size[0] // 2 + step,
-                   y - self.field.size[1] // 2 + step),
+                  (x1 - self.field.size[0] // 2 + step,
+                   y1 - self.field.size[1] // 2 + step),
                   # Upper right
-                  (x + self.field.size[0] // 2 - step,
-                   y - self.field.size[1] // 2 + step),
+                  (x1 + self.field.size[0] // 2 - step,
+                   y1 - self.field.size[1] // 2 + step),
                   # Lower left
-                  (x - self.field.size[0] // 2 + step,
-                   y + self.field.size[1] // 2 - step),
+                  (x1 - self.field.size[0] // 2 + step,
+                   y1 + self.field.size[1] // 2 - step),
                   # Lower right
-                  (x + self.field.size[0] // 2 - step,
-                   y + self.field.size[1] // 2 - step)]
+                  (x1 + self.field.size[0] // 2 - step,
+                   y1 + self.field.size[1] // 2 - step)]
 
         collide = False
         for point_x, point_y in hitbox:
