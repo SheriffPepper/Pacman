@@ -163,10 +163,12 @@ class Entity(object):
     def move(self, x: int, y: int) -> None:
         self.position = x, y
 
-    def forward(self, step: int, time: int) -> None:
+    def forward(self, step: int) -> None:
         direction = None
-        if self.queue is not None:
+        if self.queue is not None and self.time < 30:
             direction, self.direction = self.direction, self.queue
+            self.queue = None
+        elif self.queue is not None:
             self.queue = None
 
         x, y = x1, y1 = self.position
@@ -174,30 +176,18 @@ class Entity(object):
         # Left direction
         if self.direction == LEFT:
             x -= step
-        # Right direction
-        elif self.direction == RIGHT:
-            x += step
-        # Up direction
-        elif self.direction == UP:
-            y -= step
-        # Down direction
-        elif self.direction == DOWN:
-            y += step
-        # Zero direction
-        else:
-            return
-
-        # Left direction
-        if self.direction == LEFT:
             x1 -= step * 2
         # Right direction
         elif self.direction == RIGHT:
+            x += step
             x1 += step * 2
         # Up direction
         elif self.direction == UP:
+            y -= step
             y1 -= step * 2
         # Down direction
         elif self.direction == DOWN:
+            y += step
             y1 += step * 2
         # Zero direction
         else:
@@ -222,13 +212,14 @@ class Entity(object):
                 collide = True
                 break
 
+        # No wall intersection
         if not collide:
             self.move(x, y)
         # Return old direction
         elif direction is not None:
             queue = self.direction
             self.direction = direction
-            self.forward(step, time)
+            self.forward(step)
             self.queue = queue
 
     def draw(self, screen: pygame.Surface) -> None:

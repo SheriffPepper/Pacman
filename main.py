@@ -33,7 +33,9 @@ while True:
         if event.type == pygame.QUIT:
             raise SystemExit
         elif event.type == pygame.KEYDOWN:
-            pacman.update(event.key)
+            if event.key in (pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d):
+                pacman.update(event.key)
+                pacman.time = 0
 
     screen.fill(black)
     field_background.draw(screen)
@@ -49,8 +51,9 @@ while True:
     if counter % animation_speed == 0:
         pacman.next()
 
-    pacman.forward(speed, counter)
-    pacman.update([pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s][pacman.direction])
+    pacman.forward(speed)
+    pacman.pacman = pacman.pacman[pacman.direction]
+    pacman.time += 1
 
     pygame.display.flip()
     clock.tick(fps)
