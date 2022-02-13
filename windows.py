@@ -72,7 +72,7 @@ def lider_board(screen: pygame.Surface) -> str:
     SELECT nickname,
            score
       FROM champions
-     ORDER BY score,
+     ORDER BY -score,
               nickname;
     ''').fetchall()[:3]
 

@@ -344,7 +344,16 @@ class Field(Matrix):
             self.dots.remove((x, y))
         elif (x, y) in self.energizers:
             pacman.score += 50
+
             blinky.change_mode(3)
+            pinky.change_mode(3)
+            inky.change_mode(3)
+            clyde.change_mode(3)
+
+            blinky.counter = 300
+            pinky.counter = 300
+            inky.counter = 300
+            clyde.counter = 300
 
             self.energizers.remove((x, y))
 
@@ -358,6 +367,51 @@ class Field(Matrix):
                 blinky.change_mode(0)
             else:
                 self.dead = True
+
+        x1, y1 = pinky.position
+        x1, y1 = (x1 // self.size[0]) % self.width, (y1 // self.size[1]) % self.height
+
+        if (x, y) == (x1, y1):
+            if pinky.mode == 3:
+                pinky.move(224, 280)
+                pinky.direction = UP
+                pinky.change_mode(0)
+            else:
+                self.dead = True
+
+        x1, y1 = inky.position
+        x1, y1 = (x1 // self.size[0]) % self.width, (y1 // self.size[1]) % self.height
+
+        if (x, y) == (x1, y1):
+            if inky.mode == 3:
+                inky.move(224, 280)
+                inky.direction = UP
+                inky.change_mode(0)
+                inky.tmp = True
+            else:
+                self.dead = True
+
+        x1, y1 = clyde.position
+        x1, y1 = (x1 // self.size[0]) % self.width, (y1 // self.size[1]) % self.height
+
+        if (x, y) == (x1, y1):
+            if clyde.mode == 3:
+                clyde.move(224, 280)
+                clyde.direction = UP
+                clyde.change_mode(0)
+                clyde.tmp = True
+            else:
+                self.dead = True
+
+        if pacman.score >= 30 and not inky.tmp:
+            inky.tmp = True
+            inky.move(224, 280)
+            inky.mode = 0
+
+        if pacman.score >= 860 and not clyde.tmp:
+            clyde.tmp = True
+            clyde.move(224, 280)
+            clyde.mode = 0
 
         if not self.dots and not self.energizers:
             self.is_win = True
