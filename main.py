@@ -1,5 +1,5 @@
 from load_data import field_background, screen_print, black
-from ghosts import Blinky, FRIGHTENED
+from ghosts import Blinky, FRIGHTENED, CHASE
 from logic import Field, LEFT
 from windows import main_menu
 from pacman import Pacman
@@ -32,8 +32,6 @@ pacman.set_field(field)
 blinky.set_field(field)
 
 while level < 256:
-    pygame.display.set_caption(f"Pacman Classic ({nick}) {level} level")
-
     if pacman.lives < 1:
         del pacman
         del blinky
@@ -47,6 +45,8 @@ while level < 256:
 
         pacman.set_field(field)
         blinky.set_field(field)
+
+        level = 1
     else:
         field.dead = False
         field.is_win = False
@@ -56,6 +56,10 @@ while level < 256:
 
         pacman.set_field(field)
         blinky.set_field(field)
+
+    pygame.display.set_caption(f"Pacman Classic ({nick}) {level} level")
+
+    blinky.change_mode(CHASE)
 
     screen.fill(black)
     field_background.draw(screen)
@@ -96,6 +100,11 @@ while level < 256:
                 if event.key in (pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d):
                     pacman.update(event.key)
                     pacman.time = 0
+                elif event.key == pygame.K_g:
+                    print(blinky.mode)
+                    print(blinky.aim)
+                    print(blinky.position)
+                    print(field.get_cell(blinky.position))
 
         screen.fill(black)
         field_background.draw(screen)
@@ -153,9 +162,7 @@ while level < 256:
 
     if field.dead:
         pacman.lives -= 1
-        if pacman.lives > 0:
-            continue
-        raise SystemExit
+        continue
     elif field.is_win:
         pacman.lives = 0
 

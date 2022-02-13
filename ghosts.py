@@ -45,8 +45,9 @@ class Ghost(Entity):
         # Breaking the deadlock
         elif count == 1:
             if self.cell != cell:
+                self.change_direction([left, right, up, down].index(True))
                 self.cell = cell
-            return self.change_direction([left, right, up, down].index(True))
+            return self.forward(self.STEP)
         # Crossroad
         else:
             left = False if self.direction == RIGHT else left
@@ -89,12 +90,16 @@ class Ghost(Entity):
         if mode == self.mode:
             return
 
-        if mode == CHASE:
+        if self.direction == LEFT:
             pass
-        elif mode == SCATTER:
+        elif self.direction == RIGHT:
             pass
-        elif mode == FRIGHTENED:
+        elif self.direction == UP:
             pass
+        elif self.direction == DOWN:
+            pass
+
+        self.mode = mode
 
     def draw(self, screen: pygame.Surface) -> None:
         x, y = self.position
@@ -129,7 +134,7 @@ class Blinky(Ghost):
         if self.mode == CHASE:
             self.set_aim(pacman.position)
             self.move_to_aim()
-        # ))) >:)
+        # ))) <:(
         elif self.mode == SCATTER:
             self.set_aim((int(25.5 * self.field.size[0]), int(0.5 * self.field.size[1])))
             self.move_to_aim()
@@ -137,3 +142,19 @@ class Blinky(Ghost):
         elif self.mode == FRIGHTENED:
             self.set_aim(self.position)
             self.move_to_aim()
+        elif self.mode == HOUSE:
+            # self.change_direction(UP)
+            x, y = self.position
+            x = (x // self.field.size[0]) % self.field.width
+            y = (y // self.field.size[1]) % self.field.height
+
+            self.direction = UP
+            self.set_aim((self.position[0], self.position[1] + self.field.size[1] * 5))
+            self.move_to_aim()
+
+            if (x, y) in ((13, 14), (14, 14)) and \
+                14 * self.field.size[0] <= self.position[1] <= 14.5 * self.field.size[1]:
+                self.mode = CHASE
+                # self.direction = LEFT
+                self.change_direction(LEFT)
+                return

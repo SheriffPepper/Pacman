@@ -10,7 +10,6 @@ class Pacman(Entity):
         super().__init__(position, direction)
         self.pacman = pacman[direction]
         self.score = 0
-        self.energized = False
         self.lives = 3
 
     def next(self) -> None:
