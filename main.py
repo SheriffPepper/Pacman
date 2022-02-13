@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 from ghosts import Blinky, Pinky, Inky, Clyde, FRIGHTENED, CHASE, SCATTER, HOUSE
 from load_data import field_background, screen_print, black
 from logic import Field, LEFT, UP
@@ -398,6 +396,7 @@ while True:
         SELECT nickname
           FROM champions;
         ''').fetchall()
+    result = list(map(lambda x: str(x[0]), result))
 
     if nick.lower() in result:
         result = cursor.execute(f'''
@@ -435,4 +434,3 @@ while True:
     del pinky
     del inky
     del clyde
->>>>>>> eae7e18 (Deadline release (buggy, crutchy and magic code).)

@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import pygame.draw
 from load_data import items
 
@@ -458,4 +456,3 @@ if __name__ == '__main__':
 
         pygame.display.flip()
         clock.tick(60)
->>>>>>> eae7e18 (Deadline release (buggy, crutchy and magic code).)

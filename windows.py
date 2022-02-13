@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 from load_data import *
 import sqlite3
 import pygame
@@ -194,4 +192,3 @@ def main_menu(screen: pygame.Surface) -> str:
                      color=yellow if exit_button else None)
 
         pygame.display.flip()
->>>>>>> eae7e18 (Deadline release (buggy, crutchy and magic code).)
