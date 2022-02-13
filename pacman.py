@@ -9,6 +9,9 @@ class Pacman(Entity):
     def __init__(self, position: tuple, direction: int) -> None:
         super().__init__(position, direction)
         self.pacman = pacman[direction]
+        self.score = 0
+        self.energized = False
+        self.lives = 3
 
     def next(self) -> None:
         self.pacman = next(self.pacman)
